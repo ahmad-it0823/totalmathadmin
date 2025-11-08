@@ -1,94 +1,68 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Money Tracker</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
   <style>
     body {
-      background: #111;
-      color: white;
-      font-family: Arial, sans-serif;
-      text-align: center;
-      padding: 30px;
+      font-family: 'Orbitron', sans-serif;
+      background: #0f0f1a;
+      color: #00ffea;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
     }
-    input {
+    h1 { text-shadow: 0 0 10px #00ffea; }
+    .tracker {
+      background: #1a1a2e;
+      border-radius: 15px;
+      padding: 20px;
+      width: 300px;
+      box-shadow: 0 0 20px #00ffea;
+    }
+    input, button {
       padding: 10px;
-      width: 150px;
-      font-size: 16px;
-      margin-bottom: 15px;
-      border-radius: 6px;
+      margin: 5px 0;
+      border-radius: 8px;
       border: none;
       outline: none;
+      width: 100%;
+      font-family: 'Orbitron', sans-serif;
     }
-    button {
-      padding: 10px 18px;
-      margin: 5px;
-      font-size: 16px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-    .add { background: #2ecc71; }
-    .spend { background: #e74c3c; }
-    .history {
-      margin-top: 30px;
-      max-width: 400px;
-      margin-left: auto;
-      margin-right: auto;
-      text-align: left;
-    }
+    input { background: #0f0f1a; color: #00ffea; border: 1px solid #00ffea; }
+    button { background: #00ffea; color: #0f0f1a; cursor: pointer; transition: 0.3s; }
+    button:hover { background: #00bfa5; }
+    ul { list-style: none; padding: 0; }
+    li { padding: 5px 0; border-bottom: 1px solid #00ffea; }
   </style>
 </head>
-
 <body>
-  <h1>Money Tracker</h1>
-  <h2 id="balance">$0</h2>
-
-  <input id="amount" type="number" placeholder="Amount"><br>
-
-  <button class="add" onclick="addMoney()">+ Add</button>
-  <button class="spend" onclick="spendMoney()">- Spend</button>
-
-  <div class="history">
-    <h3>History</h3>
-    <ul id="historyList"></ul>
+  <h1>💸 Money Tracker</h1>
+  <div class="tracker">
+    <input type="text" id="desc" placeholder="Description">
+    <input type="number" id="amount" placeholder="Amount">
+    <button onclick="addEntry()">Add</button>
+    <ul id="entries"></ul>
+    <h2>Total: $<span id="total">0</span></h2>
   </div>
 
   <script>
-    let balance = Number(localStorage.getItem("balance")) || 0;
-    let history = JSON.parse(localStorage.getItem("history")) || [];
-
-    function update() {
-      document.getElementById("balance").innerText = "$" + balance;
-      localStorage.setItem("balance", balance);
-
-      const list = document.getElementById("historyList");
-      list.innerHTML = "";
-      history.forEach(item => {
-        const li = document.createElement("li");
-        li.textContent = item;
-        list.appendChild(li);
-      });
-
-      localStorage.setItem("history", JSON.stringify(history));
+    let total = 0;
+    function addEntry() {
+      const desc = document.getElementById('desc').value;
+      const amount = parseFloat(document.getElementById('amount').value);
+      if(!desc || isNaN(amount)) return;
+      total += amount;
+      const li = document.createElement('li');
+      li.textContent = `${desc}: $${amount}`;
+      document.getElementById('entries').appendChild(li);
+      document.getElementById('total').textContent = total;
+      document.getElementById('desc').value = '';
+      document.getElementById('amount').value = '';
     }
-
-    function addMoney() {
-      const val = Number(document.getElementById("amount").value);
-      if (!val) return;
-      balance += val;
-      history.unshift("+ $" + val);
-      update();
-    }
-
-    function spendMoney() {
-      const val = Number(document.getElementById("amount").value);
-      if (!val) return;
-      balance -= val;
-      history.unshift("- $" + val);
-      update();
-    }
-
-    update();
   </script>
 </body>
 </html>
